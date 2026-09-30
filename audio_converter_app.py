@@ -2,8 +2,8 @@
 """
 Audio Converter
 
-A GUI application for batch-converting audio files between FLAC, WAV, AIFF,
-AAC and MP3 using ffmpeg, preserving the original folder structure.
+A GUI application for batch-converting audio files between FLAC, ALAC, WAV,
+AIFF, AAC and MP3 using ffmpeg, preserving the original folder structure.
 
 Formerly "FLAC Converter".
 """
@@ -123,6 +123,16 @@ FORMATS = {
         "args": ["-c:a", "flac", "-compression_level", "8"],
         "art": True,
         "aliases": {".flac"},
+    },
+    "ALAC (.m4a)": {
+        "ext": ".m4a",
+        "args": ["-c:a", "alac"],
+        "art": True,
+        # Apple Lossless has no extension of its own -- it ships inside the same
+        # .m4a container as AAC. Skip-if-already-target-format is by extension,
+        # not codec, so an .m4a is treated as already-this-format for BOTH ALAC
+        # and AAC. See the README's Known limitations.
+        "aliases": {".m4a", ".alac"},
     },
     "WAV": {
         "ext": ".wav",

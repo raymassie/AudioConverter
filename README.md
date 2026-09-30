@@ -1,7 +1,7 @@
 # AudioConverter
 
-A GUI application for batch-converting audio files between FLAC, WAV, AIFF, AAC and MP3
-using ffmpeg, preserving the original folder structure.
+A GUI application for batch-converting audio files between FLAC, ALAC, WAV, AIFF, AAC
+and MP3 using ffmpeg, preserving the original folder structure.
 
 Formerly "FLAC Converter". Renamed when multi-format output was added.
 
@@ -11,7 +11,7 @@ Formerly "FLAC Converter". Renamed when multi-format output was added.
 
 ## Features
 
-- **Five output formats**: FLAC, WAV, AIFF, AAC (.m4a), MP3
+- **Six output formats**: FLAC, ALAC (.m4a), WAV, AIFF, AAC (.m4a), MP3
 - **Drag and drop**: drop files or folders straight onto the window
 - **Multiple folders**: on macOS the folder chooser takes several at once (shift-click
   or cmd-click); elsewhere it asks whether you want to add another after each one
@@ -32,6 +32,7 @@ Formerly "FLAC Converter". Renamed when multi-format output was added.
 | Format | Extension | Encoder | Settings |
 |---|---|---|---|
 | FLAC | `.flac` | flac | `-compression_level 8` (lossless, smallest) |
+| ALAC | `.m4a` | alac | Apple Lossless (lossless, plays natively on Apple devices/iTunes) |
 | WAV | `.wav` | pcm_s16le | 16-bit PCM |
 | AIFF | `.aiff` | pcm_s16be | 16-bit PCM |
 | AAC | `.m4a` | aac | 256 kbps |
@@ -171,9 +172,12 @@ catches read-only folders that `os.access()` reports as writable because of ACLs
 
 ## Known limitations
 
-- **Skipping is by file extension, not by codec.** An `.m4a` containing ALAC is treated
-  as already-AAC and skipped when AAC is the target. Convert to a different format, or
-  remove the extension from the format's alias set, if that matters to you.
+- **Skipping is by file extension, not by codec, and ALAC and AAC share an extension.**
+  Both live in `.m4a`, and there is no way to tell them apart by filename alone. So an
+  `.m4a` file -- whichever codec it actually holds -- is treated as already-done and
+  Skipped when *either* AAC or ALAC is the target. If you specifically need to convert
+  AAC to ALAC (or the reverse), check a converted file's actual codec afterward (Get
+  Info in Finder, or `ffprobe`), since the app cannot verify this for you.
 - **Conversion is serial.** One ffmpeg process at a time regardless of core count.
 - **WAV and AIFF cannot carry cover art.** Art is stripped for those targets. Tags are
   preserved where the container supports them.
